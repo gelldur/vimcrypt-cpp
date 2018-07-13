@@ -2,7 +2,12 @@
 
 #include <cassert>
 #include <iterator>
+#include <memory>
 #include <sstream>
+
+#include <CipherStrategy.h>
+
+#include <cipher/Blowfish.h>
 
 VimCrypt::VimCrypt(std::istream& data)
 {
@@ -71,11 +76,21 @@ VimCrypt::Header VimCrypt::readHeader(std::istream& data)
 	return header;
 }
 
+static std::unique_ptr<CipherStrategy> getStrategy(VimCrypt::Encoded encoded,
+                                                   const std::string& password)
 {
+	switch(encoded) // Pick strategy
+	{
+	case VimCrypt::Encoded::blowfish:
+		return std::make_unique<Blowfish>(password);
+	}
+
+	throw std::invalid_argument{"Unknown strategy"};
+}
 
 std::vector<unsigned char> VimCrypt::decode(const std::string& password)
 {
-	std::unique_ptr<CipherStrategy> cipher = getStrategy(_header.encode);
+	std::unique_ptr<CipherStrategy> cipher = getStrategy(_header.encode, password);
 	return cipher->decode(_data);
 }
 
