@@ -55,7 +55,7 @@ BreakBeforeBinaryOperators: None
 BreakBeforeTernaryOperators: true
 BreakConstructorInitializersBeforeComma: true
 BreakStringLiterals: true
-ColumnLimit:     120
+ColumnLimit:     100
 CommentPragmas:  '^ IWYU pragma:'
 #CompactNamespaces: false
 ConstructorInitializerAllOnOneLineOrOnePerLine: false
