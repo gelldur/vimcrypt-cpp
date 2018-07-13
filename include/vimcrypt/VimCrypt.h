@@ -10,8 +10,10 @@ class VimCrypt
 public:
 	VimCrypt(std::istream& data);
 
-	std::vector<char> decode(const std::string& password);
-	std::vector<char> encode(const std::string& password);
+	std::vector<unsigned char> decode(const std::string& password);
+	std::string decodeAsString(const std::string& password);
+
+	std::vector<unsigned char> encode(const std::string& password);
 
 	enum class Encoded
 	{
@@ -32,9 +34,9 @@ public:
 		 *  |VimCrypt~02!|01234567|01234567|
 		 *  +------------+--------+--------+
 		 **/
-		std::array<char, 12> magic;
-		std::array<char, 8> salt;
-		std::array<char, 8> IV;
+		std::array<unsigned char, 12> magic;
+		std::array<unsigned char, 8> salt;
+		std::array<unsigned char, 8> IV;
 
 		Encoded encode = Encoded::none;
 
@@ -52,5 +54,5 @@ public:
 
 private:
 	Header _header;
-	std::vector<char> _data;
+	std::vector<unsigned char> _data;
 };

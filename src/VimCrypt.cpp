@@ -48,7 +48,7 @@ VimCrypt::Header VimCrypt::readHeader(std::istream& data)
 	auto& salt = header.salt;
 	auto& IV = header.IV;
 
-	if(data.readsome(magic.data(), magic.max_size()) != magic.max_size())
+	if(data.readsome(reinterpret_cast<char*>(magic.data()), magic.max_size()) != magic.max_size())
 	{
 		throw std::invalid_argument("Invalid header - can't read magic");
 	}
@@ -59,24 +59,33 @@ VimCrypt::Header VimCrypt::readHeader(std::istream& data)
 		throw std::invalid_argument("Invalid header - none");
 	}
 
-	if(data.readsome(salt.data(), salt.max_size()) != salt.max_size())
+	if(data.readsome(reinterpret_cast<char*>(salt.data()), salt.max_size()) != salt.max_size())
 	{
 		throw std::invalid_argument("Invalid header - can't read salt");
 	}
 
-	if(data.readsome(IV.data(), IV.max_size()) != IV.max_size())
+	if(data.readsome(reinterpret_cast<char*>(IV.data()), IV.max_size()) != IV.max_size())
 	{
 		throw std::invalid_argument("Invalid header - can't read IV vector");
 	}
 	return header;
 }
 
-std::vector<char> VimCrypt::decode(const std::string& password)
 {
-	return {};
+
+std::vector<unsigned char> VimCrypt::decode(const std::string& password)
+{
+	std::unique_ptr<CipherStrategy> cipher = getStrategy(_header.encode);
+	return cipher->decode(_data);
 }
 
-std::vector<char> VimCrypt::encode(const std::string& password)
+std::string VimCrypt::decodeAsString(const std::string& password)
+{
+	auto tmp = decode(password);
+	return std::string{tmp.begin(), tmp.end()};
+}
+
+std::vector<unsigned char> VimCrypt::encode(const std::string& password)
 {
 	throw std::runtime_error("Not implemented");
 }
