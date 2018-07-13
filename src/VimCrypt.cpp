@@ -31,30 +31,30 @@ VimCrypt::VimCrypt(std::istream& data)
 
 VimCrypt::Header::Header()
 {
-	_magic.fill('\0');
-	_salt.fill('\0');
-	_IV.fill('\0');
+	magic.fill('\0');
+	salt.fill('\0');
+	IV.fill('\0');
 }
 
 constexpr std::size_t VimCrypt::Header::size() const noexcept
 {
-	return _magic.max_size() + _salt.max_size() + _IV.max_size();
+	return magic.max_size() + salt.max_size() + IV.max_size();
 }
 
 VimCrypt::Header VimCrypt::readHeader(std::istream& data)
 {
 	Header header;
-	auto& magic = header._magic;
-	auto& salt = header._salt;
-	auto& IV = header._IV;
+	auto& magic = header.magic;
+	auto& salt = header.salt;
+	auto& IV = header.IV;
 
 	if(data.readsome(magic.data(), magic.max_size()) != magic.max_size())
 	{
 		throw std::invalid_argument("Invalid header - can't read magic");
 	}
 
-	header._encode = forName(std::string{magic.begin(), magic.end()});
-	if(header._encode == Encoded::none)
+	header.encode = forName(std::string{magic.begin(), magic.end()});
+	if(header.encode == Encoded::none)
 	{
 		throw std::invalid_argument("Invalid header - none");
 	}
@@ -100,9 +100,9 @@ VimCrypt::Encoded VimCrypt::forName(const std::string& name)
 
 std::ostream& operator<<(std::ostream& stream, const VimCrypt& vimCrypt)
 {
-	stream << "Magic:" << vimCrypt._header._magic.data()
-	       << ": salt:" << vimCrypt._header._salt.data() << ": IV:" << vimCrypt._header._IV.data()
-	       << ":\nEncoded with: " << vimCrypt._header._encode << "\nData:";
+	stream << "Magic:" << vimCrypt._header.magic.data() << ": salt:" << vimCrypt._header.salt.data()
+	       << ": IV:" << vimCrypt._header.IV.data()
+	       << ":\nEncoded with: " << vimCrypt._header.encode << "\nData:";
 
 	std::copy(vimCrypt._data.begin(), vimCrypt._data.end(), std::ostream_iterator<char>(stream));
 	return stream;

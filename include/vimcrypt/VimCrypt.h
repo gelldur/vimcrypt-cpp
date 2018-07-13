@@ -32,11 +32,11 @@ public:
 		 *  |VimCrypt~02!|01234567|01234567|
 		 *  +------------+--------+--------+
 		 **/
-		std::array<char, 12> _magic;
-		std::array<char, 8> _salt;
-		std::array<char, 8> _IV;
+		std::array<char, 12> magic;
+		std::array<char, 8> salt;
+		std::array<char, 8> IV;
 
-		Encoded _encode = Encoded::none;
+		Encoded encode = Encoded::none;
 
 		Header();
 
