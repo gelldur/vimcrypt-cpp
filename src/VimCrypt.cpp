@@ -15,7 +15,9 @@ VimCrypt::VimCrypt(std::istream& data)
 	try
 	{
 		std::string tmpData;
-		std::copy(_data.begin(), _data.end(), std::back_inserter(tmpData));
+		std::copy(_data.begin(),
+		          _data.begin() + std::min(_data.size(), _header.size()),
+		          std::back_inserter(tmpData));
 		std::istringstream tmpStream{tmpData};
 		_header = readHeader(tmpStream);
 		// If everything went well we can erase header from data
