@@ -6,6 +6,7 @@
 #include <sstream>
 
 #include <CipherStrategy.h>
+#include <Utils.h>
 
 #include <cipher/Blowfish.h>
 
@@ -124,11 +125,13 @@ VimCrypt::Encoded VimCrypt::forName(const std::string& name)
 
 std::ostream& operator<<(std::ostream& stream, const VimCrypt& vimCrypt)
 {
-	stream << "Magic:" << vimCrypt._header.magic.data() << ": salt:" << vimCrypt._header.salt.data()
-	       << ": IV:" << vimCrypt._header.IV.data()
-	       << ":\nEncoded with: " << vimCrypt._header.encode << "\nData:";
+	using namespace Utils;
+	stream << "Magic:" << vimCrypt._header.magic.data()
+	       << ": salt:" << binaryToHex(vimCrypt._header.salt)
+	       << ": IV:" << binaryToHex(vimCrypt._header.IV)
+	       << ":\nEncoded with: " << vimCrypt._header.encode
+	       << "\nData:" << binaryToHex(vimCrypt._data);
 
-	std::copy(vimCrypt._data.begin(), vimCrypt._data.end(), std::ostream_iterator<char>(stream));
 	return stream;
 }
 
