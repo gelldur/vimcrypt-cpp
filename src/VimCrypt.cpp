@@ -77,13 +77,14 @@ VimCrypt::Header VimCrypt::readHeader(std::istream& data)
 	return header;
 }
 
-static std::unique_ptr<CipherStrategy> getStrategy(VimCrypt::Encoded encoded,
+static std::unique_ptr<CipherStrategy> getStrategy(const VimCrypt::Header& header,
                                                    const std::string& password)
 {
-	switch(encoded) // Pick strategy
+	switch(header.encode) // Pick strategy
 	{
 	case VimCrypt::Encoded::blowfish:
-		return std::make_unique<Blowfish>(password);
+		return std::make_unique<Blowfish>(
+		    password, std::vector<unsigned char>{header.salt.begin(), header.salt.end()});
 	}
 
 	throw std::invalid_argument{"Unknown strategy"};
@@ -91,7 +92,7 @@ static std::unique_ptr<CipherStrategy> getStrategy(VimCrypt::Encoded encoded,
 
 std::vector<unsigned char> VimCrypt::decode(const std::string& password)
 {
-	std::unique_ptr<CipherStrategy> cipher = getStrategy(_header.encode, password);
+	std::unique_ptr<CipherStrategy> cipher = getStrategy(_header, password);
 	return cipher->decode(_data);
 }
 

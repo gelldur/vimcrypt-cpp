@@ -6,13 +6,13 @@
 #include <mbedtls/blowfish.h>
 #include <mbedtls/sha256.h>
 
-Blowfish::Blowfish(const std::string& password)
+#include <Utils.h>
+
+Blowfish::Blowfish(const std::string& password, const std::vector<unsigned char>& salt)
 {
 	_context = new mbedtls_blowfish_context;
 
 	mbedtls_blowfish_init(_context);
-
-	std::vector<unsigned char> salt{0, 1, 2, 3, 4, 5, 6, 7};
 	auto cipherKey = saltPassword(password, salt);
 
 	mbedtls_blowfish_setkey(_context, &cipherKey.at(0), cipherKey.size());
@@ -56,13 +56,18 @@ std::vector<unsigned char> Blowfish::saltPassword(const std::string& password,
                                                   const std::vector<unsigned char>& salt) const
 {
 	// Process key 1001 times. @see http://en.wikipedia.org/wiki/Key_strengthening.
-	std::vector<unsigned char> key =
-	    sha256_key(std::vector<unsigned char>{password.begin(), password.end()}, salt);
+	std::vector<unsigned char> key = sha256_key(password, salt);
 	for(int i = 0; i < 1000; ++i)
 	{
-		key = sha256_key(key, salt);
+		key = sha256_key(Utils::binaryToHex(key), salt);
 	}
 	return key;
+}
+
+std::vector<unsigned char> Blowfish::sha256_key(const std::string& key,
+                                                const std::vector<unsigned char>& salt) const
+{
+	return sha256_key(std::vector<unsigned char>{key.begin(), key.end()}, salt);
 }
 
 std::vector<unsigned char> Blowfish::sha256_key(const std::vector<unsigned char>& key,

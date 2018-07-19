@@ -11,7 +11,7 @@ struct mbedtls_blowfish_context;
 class Blowfish : public CipherStrategy
 {
 public:
-	Blowfish(const std::string& password);
+	Blowfish(const std::string& password, const std::vector<unsigned char>& salt);
 	~Blowfish();
 	// Blowfish(const std::string& password);
 
@@ -27,6 +27,8 @@ private:
 	 **/
 	std::vector<unsigned char> saltPassword(const std::string& password,
 	                                        const std::vector<unsigned char>& salt) const;
+	std::vector<unsigned char> sha256_key(const std::string& key,
+	                                      const std::vector<unsigned char>& salt) const;
 	std::vector<unsigned char> sha256_key(const std::vector<unsigned char>& key,
 	                                      const std::vector<unsigned char>& salt) const;
 };
