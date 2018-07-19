@@ -1,3 +1,6 @@
 [submodule "lib/mbedtls"]
 	path = lib/mbedtls
 	url = https://github.com/ARMmbed/mbedtls.git
+[submodule "tool/vimdecrypt"]
+	path = tool/vimdecrypt
+	url = https://github.com/nlitsme/vimdecrypt.git
