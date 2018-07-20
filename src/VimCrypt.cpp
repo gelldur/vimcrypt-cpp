@@ -84,7 +84,9 @@ static std::unique_ptr<CipherStrategy> getStrategy(const VimCrypt::Header& heade
 	{
 	case VimCrypt::Encoded::blowfish:
 		return std::make_unique<Blowfish>(
-		    password, std::vector<unsigned char>{header.salt.begin(), header.salt.end()});
+		    password,
+		    std::vector<unsigned char>{header.salt.begin(), header.salt.end()},
+		    std::vector<unsigned char>{header.IV.begin(), header.IV.end()});
 	}
 
 	throw std::invalid_argument{"Unknown strategy"};
